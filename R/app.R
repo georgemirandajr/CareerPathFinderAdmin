@@ -5,8 +5,6 @@
 # 
 # sapply(packages, require, character.only = TRUE)
 
-fs::path_package("inst", "wp-admin-export.png", package = "careerpathfinder")
-
 options(shiny.maxRequestSize = 30*1024^3)
 
 # source("./functions/helpers.R") # Load all the code shiny::needed to show feedback on a button click
