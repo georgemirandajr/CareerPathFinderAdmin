@@ -1,0 +1,25 @@
+Package: careerpathfinder
+Title: Transform e-HR extracts into datasets for the Career PathFinder
+Version: 1.0.0
+Authors@R: 
+    person("George", "Miranda", , "jmirandajr@hr.lacounty.gov", role = c("aut", "cre") )
+Description: Requires the user to upload the e-HR extracts, JPACT, TITLE_Reference, and PAY_POLICY_RATE_Reference.  This package applies pre-defined business rules to the data and exports 4 datasets needed to upload to the career pathfinder web application.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    data.table,
+    dplyr,
+    DT,
+    ggplot2,
+    lubridate,
+    pkgload,
+    readr,
+    shiny,
+    shinyjs,
+    shinymaterial,
+    stringr
+Depends: 
+    R (>= 2.10)
+LazyData: true
