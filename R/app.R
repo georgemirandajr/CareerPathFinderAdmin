@@ -738,6 +738,6 @@ myApp <- function(...) {
     
   }
   
-  shiny::shinyApp(ui, server, ...)
+  shiny::shinyApp(ui, server, launch.browser = TRUE, ...)
   
 }
