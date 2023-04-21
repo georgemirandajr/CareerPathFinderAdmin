@@ -1,6 +1,6 @@
 Package: careerpathfinder
 Title: Transform e-HR extracts into datasets for the Career PathFinder
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("George", "Miranda", , "jmirandajr@hr.lacounty.gov", role = c("aut", "cre") )
 Description: Requires the user to upload the e-HR extracts, JPACT, TITLE_Reference, and PAY_POLICY_RATE_Reference.  This package applies pre-defined business rules to the data and exports 4 datasets needed to upload to the career pathfinder web application.
