@@ -490,6 +490,8 @@ myApp <- function(...) {
     
     jpact_file_date <- shiny::reactive({
       
+      job_specs = careerpathfinder::jpact_extract_specs[ complete.cases( careerpathfinder::jpact_extract_specs), ]
+      
       data.table::setDT( readr::read_fwf( jpact_file()$datapath , n_max = 1,
                                           progress = FALSE,
                                           readr::fwf_positions(job_specs$Start,
