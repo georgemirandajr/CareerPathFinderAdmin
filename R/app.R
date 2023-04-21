@@ -554,7 +554,7 @@ myApp <- function(...) {
     })
     
     shiny::observe({
-      shinyjs::onclick("clean_data", hide("clean_data"))
+      shinyjs::onclick("clean_data", shinyjs::hide("clean_data"))
     })
     
     # Hide/Show download button
@@ -580,7 +580,7 @@ myApp <- function(...) {
     shiny::observeEvent(input$clean_data, {
       
       # New Hires/Promos counts are for Career PathFinder stats page updates
-      start <- jpact_file_date() %m-% months(6)
+      start <- jpact_file_date() - months(6)
       rptMonth <- lubridate::interval( start, jpact_file_date() )
       
       nh_by_class <- jpact_data() %>%
