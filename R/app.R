@@ -1,8 +1,8 @@
 #' @export myApp
 
-options(shiny.maxRequestSize = 30*1024^3)
-
 myApp <- function(...) {
+  
+  options( shiny.maxRequestSize = 4000*1024^3 )  # 30 MB max file size upload
   
   ui <- shinymaterial::material_page(
     shinyjs::useShinyjs(),
@@ -83,8 +83,7 @@ myApp <- function(...) {
               tab_id = "jpact_tab",
               shiny::fileInput("import_jpact", "Import JPACT",
                                accept = c("text/plain")),
-              shiny::uiOutput("jpactPath"),
-              shiny::textOutput("my_file_name")
+              shiny::uiOutput("jpactPath")
             ),
             shiny::br(),
             
