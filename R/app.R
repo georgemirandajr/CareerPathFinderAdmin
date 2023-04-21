@@ -1,17 +1,6 @@
-# library(shiny)
 #' @export myApp
-# packages <- c("shiny", "shinymaterial", "shinyjs", "dplyr", "lubridate",
-#               "data.table", "stringr", "readr", "DT")
-# 
-# sapply(packages, require, character.only = TRUE)
 
 options(shiny.maxRequestSize = 30*1024^3)
-
-# source("./functions/helpers.R") # Load all the code shiny::needed to show feedback on a button click
-# source("./functions/how_to.R")
-# source("./functions/analysis_tab.R")
-# source("./functions/monitor_tab.R")
-# source("./functions/DataCleaningScript.R")
 
 myApp <- function(...) {
   
@@ -729,12 +718,12 @@ myApp <- function(...) {
                       ggtheme = ggplot2::theme_minimal()) 
     })
     
-    if (!interactive()) {
+    # if ( !interactive() ) {
       session$onSessionEnded(function() {
         stopApp()
         q("no")
       })
-    }
+    # }
     
   }
   

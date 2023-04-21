@@ -12,3 +12,9 @@ NULL
 #' @importFrom shinymaterial
 #' @importFrom dplyr
 #' @importFrom stringr
+#' @importFrom data.table
+#' @importFrom DT
+#' @importFrom ggplot2
+#' @importFrom lubridate
+#' @importFrom pkgload
+#' @importFrom readr
