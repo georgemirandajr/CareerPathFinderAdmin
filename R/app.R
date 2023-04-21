@@ -602,10 +602,10 @@ myApp <- function(...) {
             shiny::tags$br(),
             shiny::downloadButton("download_CP_data"),
             shiny::tags$p("Your datasets, such as ",
-                          toupper( names( datasetsOutput() )[1] ),
+                          base::toupper( base::names( datasetsOutput() )[1] ),
                           "are ready for download."),
             shiny::tags$br(),
-            shiny::tags$p("There were ", format( nrow(nh_by_class), big.mark = ",") , 
+            shiny::tags$p("There were ", base::format( base::nrow(nh_by_class), big.mark = ",") , 
                           "new hires and promotions in the last 6 months.")
           )
         )
@@ -622,10 +622,6 @@ myApp <- function(...) {
         Sys.sleep(3)
       })
     })
-    
-    # datasetInput <- shiny::reactive({
-    #   return(list(rock=rock, pressure=pressure, cars=cars))
-    # })
     
     output$download_CP_data <- shiny::downloadHandler(
       filename = 'item_pairs.zip',
@@ -664,8 +660,9 @@ myApp <- function(...) {
     
     # 30 Year Data Checks
     output$monitor_30_tbl <- DT::renderDataTable({
-      tbl <- cbind(names( DataExplorer::introduce(datasetsOutput()$item_pairs_30)), 
-                   transpose( DataExplorer::introduce(datasetsOutput()$item_pairs_30) ) )
+      
+      tbl <- cbind(names( DataExplorer::introduce( datasetsOutput()$item_pairs_30)), 
+                   transpose( DataExplorer::introduce( datasetsOutput()$item_pairs_30) ) )
       
       tbl <- tbl[c(1,2,5,6,7),]  # keep relevant rows
       
@@ -688,7 +685,7 @@ myApp <- function(...) {
     
     output$monitor_30_histogram <- shiny::renderPlot({
       DataExplorer::plot_histogram( datasetsOutput()$item_pairs_30[, c("Incumbents", "ItemCt", "PairCt", "Prob", "Salary1", "Salary1Min", "Salary2", "Salary2Min", "SalaryDiff")],
-                      ggtheme = ggplot2::theme_minimal()) 
+                      ggtheme = ggplot2::theme_minimal() ) 
     })
     
     # 15 Year Data Checks

@@ -15,7 +15,8 @@ withBusyIndicatorUI <- function(button) {
     shiny::span(
       class = "btn-loading-container",
       shinyjs::hidden(
-        shiny::img(src = "ajax-loader-bar.gif", class = "btn-loading-indicator"),
+        shiny::img(src = system.file("ajax-loader-bar.gif", package = "careerpathfinder"), 
+                   class = "btn-loading-indicator"),
         shiny::icon("check", class = "btn-done-indicator")
       )
     ),

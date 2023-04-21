@@ -30,40 +30,40 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
   #                                      fwf_positions(job_specs$Start,
   #                                                    job_specs$End,
   #                                                    col_names = job_specs$FieldName))) %>%
-  #     select(2) %>%  # date is in the Employee ID column
+  #     dplyr::select(2) %>%  # date is in the Employee ID column
   #     mdy()
   
   ##-------- Salary Data -------------##
   
   salaryMin <-  pprt_data %>% 
-    select(PayPolicy, Step, ExpirationDate, PayRateAmount) %>%
-    filter(ExpirationDate == "12319999") %>%
-    mutate(Sub = str_sub(PayPolicy, -1, -1)) %>%  # extract the sub-title code
-    mutate(Item = str_replace(PayPolicy, ".{1}$", "")) %>% # remove last char and rename
-    filter(Sub == "A") %>%
-    arrange(Item, PayRateAmount) %>%
-    distinct(Item, .keep_all = TRUE) %>%
-    rename(`Range Min` = PayRateAmount) %>%
-    mutate(`Range Min` = `Range Min`*2)  # convert to monthly salary
+    dplyr::select(PayPolicy, Step, ExpirationDate, PayRateAmount) %>%
+    dplyr::filter(ExpirationDate == "12319999") %>%
+    dplyr::mutate(Sub = stringr::str_sub(PayPolicy, -1, -1)) %>%  # extract the sub-title code
+    dplyr::mutate(Item = stringr::str_replace(PayPolicy, ".{1}$", "")) %>% # remove last char and dplyr::rename
+    dplyr::filter(Sub == "A") %>%
+    dplyr::arrange(Item, PayRateAmount) %>%
+    dplyr::distinct(Item, .keep_all = TRUE) %>%
+    dplyr::rename(`Range Min` = PayRateAmount) %>%
+    dplyr::mutate(`Range Min` = `Range Min`*2)  # convert to monthly salary
   
   salary <- pprt_data %>% 
-    select(PayPolicy, Step, ExpirationDate, PayRateAmount) %>%
-    filter(ExpirationDate == "12319999") %>%
-    mutate(Sub = str_sub(PayPolicy, -1, -1)) %>%  # extract the sub-title code
-    mutate(Item = str_replace(PayPolicy, ".{1}$", "")) %>% # remove last char and rename
-    filter(Sub == "A") %>%
-    arrange(Item, desc(PayRateAmount)) %>%
-    distinct(Item, .keep_all = TRUE) %>%
-    rename(`Range Max` = PayRateAmount) %>%
-    mutate(`Range Max` = `Range Max`*2)  # convert to monthly salary
+    dplyr::select(PayPolicy, Step, ExpirationDate, PayRateAmount) %>%
+    dplyr::filter(ExpirationDate == "12319999") %>%
+    dplyr::mutate(Sub = stringr::str_sub(PayPolicy, -1, -1)) %>%  # extract the sub-title code
+    dplyr::mutate(Item = stringr::str_replace(PayPolicy, ".{1}$", "")) %>% # remove last char and dplyr::rename
+    dplyr::filter(Sub == "A") %>%
+    dplyr::arrange(Item, dplyr::desc(PayRateAmount)) %>%
+    dplyr::distinct(Item, .keep_all = TRUE) %>%
+    dplyr::rename(`Range Max` = PayRateAmount) %>%
+    dplyr::mutate(`Range Max` = `Range Max`*2)  # convert to monthly salary
   
-  salary <- left_join(salary, 
-                      salaryMin[ , c("Item", "Range Min") ],
-                      by = c("Item" = "Item") )
+  salary <- dplyr::left_join(salary, 
+                             salaryMin[ , c("Item", "Range Min") ],
+                             by = c("Item" = "Item") )
   
   # If the minimum salary is zero, then use the maximum salary for the minimum
   salary <<- salary %>%
-    mutate(`Range Min` = ifelse(`Range Min` == 0, `Range Max`, `Range Min`))
+    dplyr::mutate(`Range Min` = ifelse(`Range Min` == 0, `Range Max`, `Range Min`))
   
   ##--------- Current Titles ----------##
   # Use the TITLE_Reference_Extract as the authority for current titles
@@ -72,27 +72,27 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
   current_titles <- current_titles[ grep("EXPIRED|~|SECONDARY",
                                          current_titles$TitleLong,
                                          invert = TRUE), ]
-
+  
   current_titles <- current_titles[ grep("UNAVAILABLE",
                                          current_titles$TitleShort,
                                          invert = TRUE), ]
-
+  
   current_titles <- current_titles[ grep("CONV",
                                          current_titles$TitleCode,
                                          invert = TRUE), ]
-
+  
   # Replace abbreviations in 'current_titles' with long versions of title
   # source("./functions/remove_abbr.R")
   
   list_one <- c("SPEC. SVCS." = "SPECIAL SERVICES", "SPEC.COORD." = "SPECIFICATION COORDINATOR")
-  pattern_one <- str_c(names(list_one), collapse = "|")
+  pattern_one <- stringr::str_c(names(list_one), collapse = "|")
   abbrev2long <- function(abbr) {
     list_one[abbr]
   }
   
-  current_titles$TitleLong <- str_replace_all(current_titles$TitleLong,
-                                              pattern = pattern_one,
-                                              replacement = abbrev2long)
+  current_titles$TitleLong <- stringr::str_replace_all(current_titles$TitleLong,
+                                                       pattern = pattern_one,
+                                                       replacement = abbrev2long)
   
   # This second list is for terms that can be wrapped with '\\b'.
   
@@ -160,31 +160,31 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
                    "CHIEF COUNSEL, DISAB." = "CHIEF COUNSEL, DISABILITY", "ADMIN DEPUTY, CHILD" = "ADMINISTRATIVE DEPUTY, CHILD",
                    "TRNG" = "TRAINING", "INT" = "INTERMEDIATE")
   
-  abbrev_pattern <- str_c("\\b", names(abbrev_list), "\\b", collapse = "|")
+  abbrev_pattern <- stringr::str_c("\\b", names(abbrev_list), "\\b", collapse = "|")
   
   abbrev2long <- function(abbr) {
     abbrev_list[abbr]
   }
   
   # Remove all periods in the titles
-  current_titles$TitleLong <- str_remove_all(current_titles$TitleLong, "\\.")
+  current_titles$TitleLong <- stringr::str_remove_all(current_titles$TitleLong, "\\.")
   
-  current_titles$TitleLong <- str_replace_all(current_titles$TitleLong,
-                                              pattern = abbrev_pattern,
-                                              replacement = abbrev2long)
+  current_titles$TitleLong <- stringr::str_replace_all(current_titles$TitleLong,
+                                                       pattern = abbrev_pattern,
+                                                       replacement = abbrev2long)
   
   # Get rid of abbreviations
   
   # This first list is for titles that have special characters and cannot be wrapped with the '\\b'
   list_one <- c("SPEC. SVCS." = "SPECIAL SERVICES", "SPEC.COORD." = "SPECIFICATION COORDINATOR")
-  pattern_one <- str_c(names(list_one), collapse = "|")
+  pattern_one <- stringr::str_c(names(list_one), collapse = "|")
   abbrev2long <- function(abbr) {
     list_one[abbr]
   }
   
-  current_titles$TitleLong <- str_replace_all(current_titles$TitleLong,
-                                              pattern = pattern_one,
-                                              replacement = abbrev2long)
+  current_titles$TitleLong <- stringr::str_replace_all(current_titles$TitleLong,
+                                                       pattern = pattern_one,
+                                                       replacement = abbrev2long)
   
   # This second list is for terms that can be wrapped with '\\b'.
   abbrev_list <- c("ASST" = "ASSISTANT" , "CHF" = "CHIEF", "DIV" = "DIVISION", "CNTR" = "CENTER",
@@ -251,109 +251,109 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
                    "CHIEF COUNSEL, DISAB." = "CHIEF COUNSEL, DISABILITY", "ADMIN DEPUTY, CHILD" = "ADMINISTRATIVE DEPUTY, CHILD",
                    "TRNG" = "TRAINING", "INT" = "INTERMEDIATE")
   
-  abbrev_pattern <- str_c("\\b", names(abbrev_list), "\\b", collapse = "|")
+  abbrev_pattern <- stringr::str_c("\\b", names(abbrev_list), "\\b", collapse = "|")
   
   abbrev2long <- function(abbr) {
     abbrev_list[abbr]
   }
   
   # Remove all periods in the titles
-  current_titles$TitleLong <- str_remove_all(current_titles$TitleLong, "\\.")
+  current_titles$TitleLong <- stringr::str_remove_all(current_titles$TitleLong, "\\.")
   
-  current_titles$TitleLong <- str_replace_all(current_titles$TitleLong,
-                                              pattern = abbrev_pattern,
-                                              replacement = abbrev2long)
+  current_titles$TitleLong <- stringr::str_replace_all(current_titles$TitleLong,
+                                                       pattern = abbrev_pattern,
+                                                       replacement = abbrev2long)
   
   current_titles <<- current_titles
-
+  
   ##-------- Combine df and adv -----------##
-
+  
   # First, find the number of current incumbents in each classification to display later
-  incumbents <- left_join(jpact_data,
+  incumbents <- dplyr::left_join(jpact_data,
                           title_data[,c("TitleCode", "TitleLong")],  # get title descriptions
                           by = c("TITLE_CD" = "TitleCode")) %>%
-    filter(SUB_TITLE_CD %in% c("A", "D", "N", "L") &
-             !HOME_DEPT_CD %in% c("GJ", "NL", "SC") &
-             EMPLMT_STA_CD %in% c("A", "H") &
-             EXPIRATION_DT == "12319999")  %>%
-    select( TITLE_CD, TitleLong) %>%
-    group_by( TITLE_CD ) %>%
-    summarise(Count = n()) %>%
-    rename( TitleCode = TITLE_CD )
-
+    dplyr::filter(SUB_TITLE_CD %in% c("A", "D", "N", "L") &
+                    !HOME_DEPT_CD %in% c("GJ", "NL", "SC") &
+                    EMPLMT_STA_CD %in% c("A", "H") &
+                    EXPIRATION_DT == "12319999")  %>%
+    dplyr::select( TITLE_CD, TitleLong) %>%
+    dplyr::group_by( TITLE_CD ) %>%
+    dplyr::summarise(Count = dplyr::n()) %>%
+    dplyr::rename( TitleCode = TITLE_CD )
+  
   class(incumbents) <- "data.frame"
   
   incumbents <<- incumbents
-
+  
   # Join the data with the title names and subset for records that indicate job movement
-  adv <- left_join(jpact_data,
+  adv <- dplyr::left_join(jpact_data,
                    title_data[,c("TitleCode", "TitleLong")],  # get title descriptions
                    by = c("TITLE_CD" = "TitleCode")) %>%
-    filter(nchar(EMPLOYEE_ID) < 7) %>%  # get rid of trailing row
-    filter(PERS_ACTN_CD %in% c("01", "44", "44A", "44B", "45", "45A", "46", "49", "49A"),  # keep only job movements
-           EMPLMT_STA_CD %in% c("A"),  # Historical FTE records
-           SUB_TITLE_CD %in% c("A", "D", "N", "L"),     # Permanent subtitle codes
-           !HOME_DEPT_CD %in% c("GJ", "NL", "SC") ) %>%
-    mutate(JobApptDate = mdy(JOB_APPT_DT, tz = "UTC"),  # convert to date format
-           JobLastDate = mdy(EXPIRATION_DT, tz = "UTC")) %>%
-    filter(JobApptDate >= as.POSIXct("2012-04-01", tz = "UTC") ) %>%  # filter after formatting
-    rename( EmployeeID = EMPLOYEE_ID, TitleCode = TITLE_CD )
-
+    dplyr::filter( nchar(EMPLOYEE_ID) < 7) %>%  # get rid of trailing row
+    dplyr::filter(PERS_ACTN_CD %in% c("01", "44", "44A", "44B", "45", "45A", "46", "49", "49A"),  # keep only job movements
+                  EMPLMT_STA_CD %in% c("A"),  # Historical FTE records
+                  SUB_TITLE_CD %in% c("A", "D", "N", "L"),     # Permanent subtitle codes
+                  !HOME_DEPT_CD %in% c("GJ", "NL", "SC") ) %>%
+    dplyr::mutate(JobApptDate = lubridate::mdy(JOB_APPT_DT, tz = "UTC"),  # convert to date format
+                  JobLastDate = lubridate::mdy(EXPIRATION_DT, tz = "UTC")) %>%
+    dplyr::filter( JobApptDate >= as.POSIXct("2012-04-01", tz = "UTC") ) %>%  # dplyr::filter after formatting
+    dplyr::rename( EmployeeID = EMPLOYEE_ID, TitleCode = TITLE_CD )
+  
   # Make the columns the same in both datasets
-  df <- df %>% select(EMPNO, ITEM, ITEM_DESC, JOB_APPT_D, JOB_STOP_D)  # taps.rds
-  adv <- adv %>% select(EmployeeID, TitleCode, TitleLong, JobApptDate, JobLastDate)
-
+  df <- df %>% dplyr::select(EMPNO, ITEM, ITEM_DESC, JOB_APPT_D, JOB_STOP_D)  # taps.rds
+  adv <- adv %>% dplyr::select(EmployeeID, TitleCode, TitleLong, JobApptDate, JobLastDate)
+  
   colnames(df) <- colnames(adv)  # Use adv column names for df colnames
-
+  
   # combine datasets
   combined <- rbind(df, adv)
-
+  
   # Make a reference list of titles in case there's NA values in the data later
   class(combined) <- "data.frame"
-
-  titles_in_data <- combined %>% arrange( desc(JobApptDate) )
-
+  
+  titles_in_data <- combined %>% dplyr::arrange( dplyr::desc(JobApptDate) )
+  
   titles_in_data <- titles_in_data[ !base::duplicated( titles_in_data[ "TitleCode" ] ), ]
-
+  
   titles_in_data <<- titles_in_data
   
   rm(adv, df)  # unload the original taps and advantage data
-
+  
   ##-------- Tidy the Data -----------##
   # Remove whitespace from the title description column
-  combined$TitleLong <- str_trim(combined$TitleLong, side = "both")
-
-  # Arrange each employee's items in ascending order by date (earliest at top)
-  # And filter to create a 30 year dataset
+  combined$TitleLong <- stringr::str_trim(combined$TitleLong, side = "both")
+  
+  # dplyr::arrange each employee's items in ascending order by date (earliest at top)
+  # And dplyr::filter to create a 30 year dataset
   combined <- combined %>%     # original assigned to combined_30
-    group_by(EmployeeID) %>%
-    arrange(EmployeeID, JobApptDate) %>%
-    ungroup()
-
-  # Filter the data to create 30 year dataset
+    dplyr::group_by( EmployeeID ) %>%
+    dplyr::arrange( EmployeeID, JobApptDate) %>%
+    dplyr::ungroup()
+  
+  # dplyr::filter the data to create 30 year dataset
   combined_30 <- combined %>%
-    filter(JobApptDate > as.character( today()-years(30) ) )  # (30 year dataset)  // 400k+
-
-  # Copy and filter the data to create 15 year dataset
+    dplyr::filter(JobApptDate > as.character( lubridate::today() - lubridate::years(30) ) )  # (30 year dataset)  // 400k+
+  
+  # Copy and dplyr::filter the data to create 15 year dataset
   combined_15 <- combined %>%
-    filter(JobApptDate > as.character( today()-years(15) ) )  # (15 year dataset) // 250k+
-
+    dplyr::filter(JobApptDate > as.character( lubridate::today() - lubridate::years(15) ) )  # (15 year dataset) // 250k+
+  
   ##----- Apply the Cleaning Rules -----##
   # Use the clean_careers() function to run all the cleaning rules:
   # source("./functions/clean_careers.R")
   combined_30 <- clean_careers(combined_30)
   # # tbl_1 <- cbind(beforeRuleStats, rule1stat, rule2stat, rule3stat, rule4stat)  # stats for 30 yr data
-
+  
   combined_15 <- clean_careers(combined_15)
   # tbl_2 <- cbind(beforeRuleStats, rule1stat, rule2stat, rule3stat, rule4stat)  # stats for 15 yr data
-
+  
   ##----- Make Item Pairs -----##
   # Use the make_pairs() and make_pairs_rev() functions to create item_pairs for each time data cut
   # Forward
   # source("./functions/make_pairs.R")
   item_pairs_30 <- make_pairs(combined_30)
   item_pairs_15 <- make_pairs(combined_15)
-
+  
   # Reverse
   # source("./functions/make_pairs_rev.R")
   item_pairs_30_rev <- make_pairs_rev(combined_30)
@@ -363,7 +363,7 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
                 item_pairs_15_rev = item_pairs_15_rev,
                 item_pairs_30 = item_pairs_30,
                 item_pairs_30_rev = item_pairs_30_rev) )
-
+  
   ##----- Make Item Reference Table -----##
   # source("./functions/make_item_ref.R")
   # item_ref_30 <- make_item_ref(item_pairs_30)
@@ -378,38 +378,38 @@ dataCleaning <- function( jpact_data, pprt_data, title_data ) {
   # 
   # # Run checks on the data that will display to analyst in desktop app
   # source("./functions/checks_on_data.r")
-
+  
   # # Copy the old files into a folder called 'temp'
   # # 30 fwd
   # file.copy("./data/Item_Pairs_30.csv",
   #           "./temp/Item_Pairs_30.csv")
   # 
-  # file.rename("./temp/Item_Pairs_30.csv",
+  # file.dplyr::rename("./temp/Item_Pairs_30.csv",
   #             "./temp/Item_Pairs_30_old.csv")
   # 
   # # 30 reverse
   # file.copy("./data/Item_Pairs_30_rev.csv",
   #           "./temp/Item_Pairs_30_rev.csv")
   # 
-  # file.rename("./temp/Item_Pairs_30_rev.csv",
+  # file.dplyr::rename("./temp/Item_Pairs_30_rev.csv",
   #             "./temp/Item_Pairs_30_rev_old.csv")
   # 
   # # 15 fwd
   # file.copy("./data/Item_Pairs_15.csv",
   #           "./temp/Item_Pairs_15.csv")
   # 
-  # file.rename("./temp/Item_Pairs_15.csv",
+  # file.dplyr::rename("./temp/Item_Pairs_15.csv",
   #             "./temp/Item_Pairs_15_old.csv")
   # 
   # # 15 reverse
   # file.copy("./data/Item_Pairs_15_rev.csv",
   #           "./temp/Item_Pairs_15_rev.csv")
   # 
-  # file.rename("./temp/Item_Pairs_15_rev.csv",
+  # file.dplyr::rename("./temp/Item_Pairs_15_rev.csv",
   #             "./temp/Item_Pairs_15_rev_old.csv")
-
+  
   # Save the OUTPUT in the 'data' folder
-
+  
   # readr::write_csv(item_pairs_30, "./data/Item_Pairs_30.csv", na = "")
   # readr::write_csv(item_pairs_15, "./data/Item_Pairs_15.csv", na = "")
   # readr::write_csv(item_pairs_30_rev, "./data/Item_Pairs_30_rev.csv", na = "")
