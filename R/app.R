@@ -582,7 +582,7 @@ myApp <- function(...) {
     shiny::observeEvent(input$clean_data, {
       
       # New Hires/Promos counts are for Career PathFinder stats page updates
-      start <- jpact_file_date() - months(6)
+      start <- jpact_file_date() - base::months(6)
       rptMonth <- lubridate::interval( start, jpact_file_date() )
       
       nh_by_class <- jpact_data() %>%
@@ -632,10 +632,10 @@ myApp <- function(...) {
         
         fs <- c("item_pairs_15.csv", "item_pairs_15_rev.csv", 
                 "item_pairs_30.csv", "item_pairs_30_rev.csv")
-        readr::write_csv(datasetsOutput()$item_pairs_15, path = "item_pairs_15.csv", na = "")
-        readr::write_csv(datasetsOutput()$item_pairs_15_rev, path = "item_pairs_15_rev.csv", na = "")
-        readr::write_csv(datasetsOutput()$item_pairs_30, path = "item_pairs_30.csv", na = "")
-        readr::write_csv(datasetsOutput()$item_pairs_30_rev, path = "item_pairs_30_rev.csv", na = "")
+        readr::write_csv(datasetsOutput()$item_pairs_15, file = "item_pairs_15.csv", na = "")
+        readr::write_csv(datasetsOutput()$item_pairs_15_rev, file = "item_pairs_15_rev.csv", na = "")
+        readr::write_csv(datasetsOutput()$item_pairs_30, file = "item_pairs_30.csv", na = "")
+        readr::write_csv(datasetsOutput()$item_pairs_30_rev, file = "item_pairs_30_rev.csv", na = "")
         print (fs)
         
         utils::zip( zipfile=fname, files=fs)
@@ -662,7 +662,7 @@ myApp <- function(...) {
     output$monitor_30_tbl <- DT::renderDataTable({
       
       tbl <- cbind(names( DataExplorer::introduce( datasetsOutput()$item_pairs_30)), 
-                   transpose( DataExplorer::introduce( datasetsOutput()$item_pairs_30) ) )
+                   data.table::transpose( DataExplorer::introduce( datasetsOutput()$item_pairs_30) ) )
       
       tbl <- tbl[c(1,2,5,6,7),]  # keep relevant rows
       
@@ -692,7 +692,7 @@ myApp <- function(...) {
     
     output$monitor_15_tbl <- DT::renderDataTable({
       tbl <- cbind(names( DataExplorer::introduce( datasetsOutput()$item_pairs_15)), 
-                   transpose( DataExplorer::introduce( datasetsOutput()$item_pairs_15) ) )
+                   data.table::transpose( DataExplorer::introduce( datasetsOutput()$item_pairs_15) ) )
       
       tbl <- tbl[c(1,2,5,6,7),]  # keep relevant rows
       
