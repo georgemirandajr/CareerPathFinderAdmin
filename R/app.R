@@ -228,7 +228,7 @@ myApp <- function(...) {
       # Check file name
       if ( !is.null(input$import_jpact$datapath) ) {
         
-        if( grepl("JPACT", basename(input$import_jpact$name) ) ) {
+        if( grepl("JPACT", base::basename(input$import_jpact$name) ) ) {
           
           shiny::tagList(
             shiny::HTML(
@@ -266,7 +266,7 @@ myApp <- function(...) {
       # Check file name
       if ( !is.null(  input$import_pprt$datapath ) ) {
         
-        if( grepl(  "PAY_POLICY_RATE", basename( input$import_pprt$name ) ) ) {
+        if( grepl(  "PAY_POLICY_RATE", base::basename( input$import_pprt$name ) ) ) {
           
           shiny::tagList(
             shiny::HTML(
@@ -303,7 +303,7 @@ myApp <- function(...) {
       # Check file name
       if ( !is.null( input$import_title$datapath ) ) {
         
-        if( grepl( "TITLE_Reference_Extract", basename(input$import_title$name) ) ) {
+        if( grepl( "TITLE_Reference_Extract", base::basename(input$import_title$name) ) ) {
           
           shiny::tagList(
             shiny::HTML(
