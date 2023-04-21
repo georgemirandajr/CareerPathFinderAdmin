@@ -8,6 +8,16 @@
 #' @usage lhs \%>\% rhs
 NULL
 
+#' Within interval operator
+#' 
+#' @name %within%
+#' @rdname within
+#' @keywords internal
+#' @export
+#' @importFrom lubridate %within%
+#' @usage date %within% interval
+NULL
+
 #' @importFrom shiny
 #' @importFrom shinymaterial
 #' @importFrom dplyr
