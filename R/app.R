@@ -473,7 +473,7 @@ myApp <- function(...) {
     
     jpact_data <- shiny::reactive({
       
-      job_specs = jpact_extract_specs[ complete.cases(jpact_extract_specs), ]
+      job_specs = careerpathfinder::jpact_extract_specs[ complete.cases( careerpathfinder::jpact_extract_specs), ]
       
       adv <- data.table::setDT( readr::read_fwf( jpact_file()$datapath , skip = 1,
                                                 progress = FALSE,
@@ -483,7 +483,7 @@ myApp <- function(...) {
                                                   job_specs$End,
                                                   col_names = job_specs$FieldName)))
       
-      as.data.frame(adv) 
+      base::as.data.frame(adv) 
       
     })
     
@@ -506,7 +506,7 @@ myApp <- function(...) {
     
     title_data <- shiny::reactive({
       
-      title_specs = title_reference_specs[ complete.cases(title_reference_specs), ]
+      title_specs = careerpathfinder::title_reference_specs[ complete.cases( careerpathfinder::title_reference_specs), ]
       
       title <- data.table::setDT( readr::read_fwf( title_file()$datapath,
                                                    progress = FALSE,
@@ -518,7 +518,7 @@ myApp <- function(...) {
                                     dplyr::filter(ExpirationDate == "12319999")
       )
       
-      as.data.frame(title)
+      base::as.data.frame(title)
       
     })
     
@@ -529,7 +529,7 @@ myApp <- function(...) {
     
     pprt_data <- shiny::reactive({
       
-      pprt_specs = pprt_reference_specs[ complete.cases(pprt_reference_specs), ]
+      pprt_specs = careerpathfinder::pprt_reference_specs[ complete.cases(  careerpathfinder::pprt_reference_specs), ]
       
       salary <- data.table::setDT(readr::read_fwf( pprt_file()$datapath,
                                                    progress = FALSE,
@@ -539,7 +539,7 @@ myApp <- function(...) {
                                                      pprt_specs$End,
                                                      col_names = pprt_specs$FieldName)))
       
-      as.data.frame(salary)
+      base::as.data.frame(salary)
       
     })
     
