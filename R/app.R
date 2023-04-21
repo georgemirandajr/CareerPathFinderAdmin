@@ -198,7 +198,7 @@ myApp <- function(...) {
                                         shiny::tags$h4("Format Data from Word Press"),
                                         shiny::tags$p("Upload the csv file that you downloaded from the admin site, then
                               click the 'Format User Data' button."),
-                                        tags$img( src = system.file( "wp-admin-export.png", package = "careerpathfinder"),
+                                        shiny::tags$img( src = system.file( "wp-admin-export.png", package = "careerpathfinder"),
                                                  width = "100px", height = "100px")
                                       ),
                                       shinymaterial::material_file_input("uploadUserData", "Upload User Data"),
